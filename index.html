@@ -1,1 +1,721 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$ whoami | Full Stack Python Developer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --accent-green: #39d353;
+            --accent-blue: #58a6ff;
+            --accent-purple: #a5a5ff;
+            --border-color: #30363d;
+            --hover-bg: #262c36;
+        }
+
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Terminal Header */
+        .terminal-header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .terminal-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .close { background: #ff5f56; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #27ca3f; }
+
+        .terminal-title {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .terminal-path {
+            color: var(--accent-blue);
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 60px;
+            padding: 40px 0;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        }
+
+        .prompt {
+            color: var(--accent-green);
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .typing-animation::after {
+            content: '|';
+            animation: blink 1s infinite;
+            color: var(--accent-green);
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Navigation */
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-item {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            background: var(--bg-tertiary);
+        }
+
+        .nav-item:hover {
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+            background: var(--hover-bg);
+            transform: translateY(-2px);
+        }
+
+        /* Sections */
+        .section {
+            padding: 60px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: var(--accent-blue);
+        }
+
+        .section h2::before {
+            content: '# ';
+            color: var(--accent-green);
+        }
+
+        /* Code Block Style */
+        .code-block {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .file-name {
+            color: var(--accent-blue);
+            font-size: 14px;
+        }
+
+        .language-tag {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        /* Project Grid */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .project-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 30px rgba(88, 166, 255, 0.1);
+        }
+
+        .project-title {
+            color: var(--accent-blue);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .project-description {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tech-tag {
+            background: var(--bg-tertiary);
+            color: var(--accent-green);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .project-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .project-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--accent-blue);
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .project-link:hover {
+            background: var(--accent-blue);
+            color: var(--bg-primary);
+        }
+
+        /* Skills Section */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .skill-category {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+        }
+
+        .skill-category h3 {
+            color: var(--accent-purple);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .skill-list {
+            list-style: none;
+        }
+
+        .skill-list li {
+            color: var(--text-secondary);
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .skill-list li:last-child {
+            border-bottom: none;
+        }
+
+        .skill-list li::before {
+            content: '→ ';
+            color: var(--accent-green);
+            margin-right: 10px;
+        }
+
+        /* Contact Section */
+        .contact-info {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 15px 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            background: var(--bg-secondary);
+        }
+
+        .contact-link:hover {
+            color: var(--accent-green);
+            border-color: var(--accent-green);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-menu {
+                gap: 20px;
+            }
+            
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+    </style>
+</head>
+<body>
+    <!-- Terminal Header -->
+    <div class="terminal-header">
+        <div class="container">
+            <div class="terminal-bar">
+                <div class="terminal-controls">
+                    <div class="control-btn close"></div>
+                    <div class="control-btn minimize"></div>
+                    <div class="control-btn maximize"></div>
+                </div>
+                <div class="terminal-title">developer@portfolio:~$</div>
+                <div class="terminal-path">~/portfolio/index.html</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="prompt">user@system:~$ whoami</div>
+                <h1 class="typing-animation">Full Stack Python Developer</h1>
+                <p class="subtitle">Building scalable backends & AI-powered solutions</p>
+                
+                <nav class="nav-menu">
+                    <a href="#about" class="nav-item">./about</a>
+                    <a href="#projects" class="nav-item">./projects</a>
+                    <a href="#skills" class="nav-item">./skills</a>
+                    <a href="#contact" class="nav-item">./contact</a>
+                </nav>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section">
+            <div class="container">
+                <h2>About</h2>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="file-name">about_me.py</span>
+                        <span class="language-tag">Python</span>
+                    </div>
+                    <pre><code>class Developer:
+    def __init__(self):
+        self.name = "Jansher Khan"
+        self.role = "Full Stack Python Developer & AI Engineer"
+        self.languages = ["Python", "JavaScript", "SQL", "HTML", "CSS"]
+        self.frameworks = ["Django", "FastAPI", "React", "Flask"]
+        self.databases = ["PostgreSQL", "MongoDB", "Redis"]
+        self.ai_tools = ["TensorFlow", "PyTorch", "Hugging Face", "LangChain"]
+        self.current_focus = "AI Engineering & Machine Learning"
+    
+    def get_current_projects(self):
+        return [
+            "PowerBI Dashboard Analytics",
+            "Telegram Bot Automation",
+            "AI Chatbot Development",
+            "WhatsApp Business Integration"
+        ]
+    
+    def say_hello(self):
+        return "Building the future, one API at a time! 🚀"
+
+# Initialize developer instance
+me = Developer()
+print(me.say_hello())</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="section">
+            <div class="container">
+                <h2>Projects</h2>
+                <div class="project-grid">
+                    <!-- PowerBI Dashboard -->
+                    <div class="project-card">
+                        <h3 class="project-title">📊 PowerBI Analytics Dashboard</h3>
+                        <p class="project-description">
+                            Interactive business intelligence dashboard with real-time data visualization and automated reporting features.
+                        </p>
+                        <div class="tech-stack">
+                            <span class="tech-tag">PowerBI</span>
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">SQL</span>
+                            <span class="tech-tag">DAX</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">GitHub</a>
+                            <a href="#" class="project-link">Live Demo</a>
+                        </div>
+                    </div>
+
+                    <!-- Telegram Bot -->
+                    <div class="project-card">
+                        <h3 class="project-title">🤖 Telegram Bot Framework</h3>
+                        <p class="project-description">
+                            Scalable Telegram bot with advanced features including AI responses, webhook integration, and database persistence.
+                        </p>
+                        <div class="tech-stack">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Telegram API</span>
+                            <span class="tech-tag">PostgreSQL</span>
+                            <span class="tech-tag">Redis</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">GitHub</a>
+                            <a href="#" class="project-link">Documentation</a>
+                        </div>
+                    </div>
+
+                    <!-- AI Chatbot -->
+                    <div class="project-card">
+                        <h3 class="project-title">🧠 AI Chatbot Engine</h3>
+                        <p class="project-description">
+                            Intelligent conversational AI using LLMs with context awareness, memory, and multi-language support.
+                        </p>
+                        <div class="tech-stack">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">LangChain</span>
+                            <span class="tech-tag">OpenAI</span>
+                            <span class="tech-tag">FastAPI</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">GitHub</a>
+                            <a href="#" class="project-link">API Docs</a>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Bot -->
+                    <div class="project-card">
+                        <h3 class="project-title">💬 WhatsApp Business Bot</h3>
+                        <p class="project-description">
+                            Automated WhatsApp business solution with order processing, customer support, and analytics integration.
+                        </p>
+                        <div class="tech-stack">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">WhatsApp API</span>
+                            <span class="tech-tag">Django</span>
+                            <span class="tech-tag">Celery</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">GitHub</a>
+                            <a href="#" class="project-link">Case Study</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="section">
+            <div class="container">
+                <h2>Skills</h2>
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h3>Backend Development</h3>
+                        <ul class="skill-list">
+                            <li>Python (Django, FastAPI, Flask)</li>
+                            <li>RESTful API Design</li>
+                            <li>Database Design & Optimization</li>
+                            <li>Microservices Architecture</li>
+                            <li>Authentication & Security</li>
+                        </ul>
+                    </div>
+
+                    <div class="skill-category">
+                        <h3>AI & Machine Learning</h3>
+                        <ul class="skill-list">
+                            <li>Large Language Models (LLMs)</li>
+                            <li>TensorFlow & PyTorch</li>
+                            <li>Natural Language Processing</li>
+                            <li>LangChain & Vector Databases</li>
+                            <li>ML Model Deployment</li>
+                        </ul>
+                    </div>
+
+                    <div class="skill-category">
+                        <h3>Data & Analytics</h3>
+                        <ul class="skill-list">
+                            <li>PowerBI & Data Visualization</li>
+                            <li>SQL & Database Management</li>
+                            <li>ETL Pipelines</li>
+                            <li>Statistical Analysis</li>
+                            <li>Business Intelligence</li>
+                        </ul>
+                    </div>
+
+                    <div class="skill-category">
+                        <h3>DevOps & Tools</h3>
+                        <ul class="skill-list">
+                            <li>Docker & Containerization</li>
+                            <li>AWS/GCP Cloud Services</li>
+                            <li>CI/CD Pipelines</li>
+                            <li>Git Version Control</li>
+                            <li>Linux System Administration</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section">
+            <div class="container">
+                <h2>Contact</h2>
+                <div class="contact-info">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="file-name">contact.json</span>
+                            <span class="language-tag">JSON</span>
+                        </div>
+                        <pre><code>{
+  "status": "available_for_opportunities",
+  "email": "your.email@example.com",
+  "location": "Your Location",
+  "response_time": "< 24 hours",
+  "preferred_contact": "email",
+  "open_to": [
+    "Full-time opportunities",
+    "Consulting projects",
+    "AI/ML collaborations",
+    "Open source contributions"
+  ]
+}</code></pre>
+                    </div>
+                    
+                    <div class="contact-links">
+                        <a href="mailto:janshermarri@gmail.com" class="contact-link">📧 Email</a>
+                        <a href="https://github.com/janshermarri" class="contact-link">🐙 GitHub</a>
+                        <a href="https://www.linkedin.com/in/jansher-khan-510301121/" class="contact-link">💼 LinkedIn</a>
+                        <a href="https://kaggle.com/janshermarri" class="contact-link">📊 Kaggle</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 Your Name. Built with ❤️ and lots of ☕ | <span style="color: var(--accent-green);">Status: Open to opportunities</span></p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add subtle typing effect to hero title
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Initialize typing animation on load
+        window.addEventListener('load', () => {
+            const heroTitle = document.querySelector('.hero h1');
+            const originalText = heroTitle.textContent;
+            typeWriter(heroTitle, originalText, 150);
+        });
+
+        // Add terminal-like interactions
+        document.addEventListener('keydown', function(e) {
+            // Easter egg: Konami code or Ctrl+Shift+C for console message
+            if (e.ctrlKey && e.shiftKey && e.code === 'KeyC') {
+                console.log('%c🚀 Welcome to the Matrix, Neo!', 'color: #39d353; font-size: 16px; font-weight: bold;');
+                console.log('%cLooks like you found the developer console. Here\'s a secret:', 'color: #58a6ff;');
+                console.log('%c> const skills = ["Python", "AI", "Backend", "Problem Solving"];', 'color: #f0f6fc; font-family: monospace;');
+                console.log('%c> console.log("Thanks for checking out my portfolio!");', 'color: #f0f6fc; font-family: monospace;');
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe project cards for animation
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
